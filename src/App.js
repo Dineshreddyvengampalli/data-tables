@@ -1,24 +1,36 @@
-import logo from './logo.svg';
 import './App.css';
+import DisplayData from './Components/DisplayData';
+import axios from 'axios';
+import {useState,useEffect} from 'react'
+import 'jquery/dist/jquery.min.js';
+ 
+
+ 
 
 function App() {
+  const [res,setRes] = useState([])
+  let getData = async()=>{
+    let res = await axios.get('https://jsonplaceholder.typicode.com/todos/')
+    let data = await res.data
+    setRes(data) 
+  }
+  useEffect(()=>{
+    let isMounted = false
+    axios.get('https://jsonplaceholder.typicode.com/todos/')
+      .then((res)=>{
+        if(!isMounted){
+          setRes(res.data)
+        }
+      })
+
+    if(!isMounted){
+      getData()
+    }
+    isMounted = true
+  },[])
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <DisplayData item = {res}></DisplayData>
   );
 }
 
